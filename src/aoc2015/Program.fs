@@ -4,7 +4,9 @@
 let solutions =
    Map.empty.
       Add("Day1.answerPt1", Day1.answerPt1).
-      Add("Day1.answerPt2", Day1.answerPt2);;
+      Add("Day1.answerPt2", Day1.answerPt2).
+      Add("Day2.answerPt1", Day2.answerPt1).
+      Add("Day2.answerPt2", Day2.answerPt2);;
 
 [<EntryPoint>]
 let main args =
