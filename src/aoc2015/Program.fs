@@ -6,7 +6,9 @@ let solutions =
         Add("Day1.answerPt1", Day1.answerPt1).
         Add("Day1.answerPt2", Day1.answerPt2).
         Add("Day2.answerPt1", Day2.answerPt1).
-        Add("Day2.answerPt2", Day2.answerPt2);;
+        Add("Day2.answerPt2", Day2.answerPt2).
+        Add("Day3.answerPt1", Day3.answerPt1).
+        Add("Day3.answerPt2", Day3.answerPt2);;
 
 [<EntryPoint>]
 let main args =
