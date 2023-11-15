@@ -14,13 +14,12 @@ let measure present=
     let wh = w * h
     let hl = h * l
     let area = 2*lw + 2*wh + 2*hl
-    let numbers = Array.sort [|lw; wh; hl|]
-    let extra = numbers[0]
+    let extra = Array.min [|lw; wh; hl|]
     area + extra
 
 let rec solvePt1 input =
     let measurements = Array.map (fun i -> measure i) input
     let total = Array.sum measurements
-    "{total.ToString()} square feet"
+    $"{total.ToString()}"
 
 let answerPt1 = solvePt1 raw
