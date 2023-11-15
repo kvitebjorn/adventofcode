@@ -1,5 +1,9 @@
 # adventofcode
 
+To run a solution...
+`dotnet run m n` where m is the day # and n is the part #
+for example `dotnet run 1 2` will run the solution for day 1, part 2
+
 To start a new year...
 
 1. cd to this root directory
