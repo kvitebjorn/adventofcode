@@ -23,3 +23,20 @@ let rec solvePt1 input =
     $"{total.ToString()}"
 
 let answerPt1 = solvePt1 raw
+
+let measurePt2 present=
+    let matched = Regex.Match(present, @"(\d+)x(\d+)x(\d+)")
+    let l = int matched.Groups[1].Value
+    let w = int matched.Groups[2].Value
+    let h = int matched.Groups[3].Value
+    let sorted = Array.sort [|l;w;h|]
+    let ribbonLength = sorted[0]*2 + sorted[1]*2
+    let ribbonExtra = l*w*h
+    ribbonLength + ribbonExtra
+
+let rec solvePt2 input =
+    let measurements = Array.map (fun i -> measurePt2 i) input
+    let total = Array.sum measurements
+    $"{total.ToString()}"
+
+let answerPt2 = solvePt2 raw
