@@ -1,8 +1,17 @@
 # adventofcode
 
 To run a solution...
-`dotnet run m n` where m is the day # and n is the part #
-for example `dotnet run 1 2` will run the solution for day 1, part 2
+
+`dotnet run m n`
+
+where m is the day # and n is the part #
+
+for example, to run the solution for day 1, part 2:
+
+`dotnet run 1 2`
+
+----------
+
 
 To start a new year...
 
@@ -11,6 +20,8 @@ To start a new year...
 3. run `dotnet sln add src/aoc2023/aoc2023.fsproj`
 4. copy the `main` mechanism from a previous year's Program.fs to this year's Program.fs
     - subject to change in the future, this is kind of disgusting lol
+
+----------
 
 To add a new day...
 1. create a new day file in the format `day{n}.fs`, append a 0 to single digit days
