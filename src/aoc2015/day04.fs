@@ -20,3 +20,11 @@ let rec solvePt1 input n =
     | _ -> solvePt1 input (n+1)
 
 let answerPt1 = solvePt1 raw 0
+
+let rec solvePt2 input n =
+    let result = doMd5 input n
+    match result with 
+    | '0'::'0'::'0'::'0'::'0'::'0'::_ -> n.ToString()
+    | _ -> solvePt2 input (n+1)
+
+let answerPt2 = solvePt2 raw 0
