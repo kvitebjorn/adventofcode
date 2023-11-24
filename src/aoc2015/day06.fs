@@ -54,3 +54,21 @@ let rec solvePt1 input grid =
     | _     -> sprintf "%i" (sum2dArray grid)
 
 let answerPt1 = solvePt1 (raw |> Seq.toList) (Array2D.zeroCreate 1000 1000)
+
+let doTheThingPt2 instruction (grid: int[,]) =
+    let coords = parseCoords instruction
+    match instruction with 
+    | Prefix "turn on" _  -> doTheLights grid coords (fun x -> x + 1)
+    | Prefix "turn off" _ -> doTheLights grid coords (fun x -> 
+                                                        match x < 1 with 
+                                                        | false -> x - 1
+                                                        | _ -> 0)
+    | Prefix "toggle" _   -> doTheLights grid coords (fun x -> x + 2)
+    | _ -> grid
+
+let rec solvePt2 input grid =
+    match input with
+    | x::xs -> solvePt2 xs  (doTheThingPt2 x grid)
+    | _     -> sprintf "%i" (sum2dArray grid)
+
+let answerPt2 = solvePt2 (raw |> Seq.toList) (Array2D.zeroCreate 1000 1000)
