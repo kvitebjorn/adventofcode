@@ -2,7 +2,8 @@
 
 // TODO: there's gotta be a way to do this better...
 let solutions =
-   Map.empty;;
+   Map.empty.
+        Add("Day1.answerPt1", Day1.answerPt1);;
 
 [<EntryPoint>]
 let main args =
