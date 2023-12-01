@@ -24,24 +24,18 @@ let getDigits s =
     let last  = matched2.Groups[1].Value
     (first,last)
 
-let (|Prefix|_|) (p:string) (s:string) =
-    if s.StartsWith(p) then
-        Some(s.Substring(p.Length))
-    else
-        None
-
 let toNumericDigit s =
     match s with
-    | Prefix "one"   _ -> int(1).ToString()
-    | Prefix "two"   _ -> int(2).ToString()
-    | Prefix "three" _ -> int(3).ToString()
-    | Prefix "four"  _ -> int(4).ToString()
-    | Prefix "five"  _ -> int(5).ToString()
-    | Prefix "six"   _ -> int(6).ToString()
-    | Prefix "seven" _ -> int(7).ToString()
-    | Prefix "eight" _ -> int(8).ToString()
-    | Prefix "nine"  _ -> int(9).ToString()
-    | _ -> s
+    | "one"   -> "1"
+    | "two"   -> "2"
+    | "three" -> "3"
+    | "four"  -> "4"
+    | "five"  -> "5"
+    | "six"   -> "6"
+    | "seven" -> "7"
+    | "eight" -> "8"
+    | "nine"  -> "9"
+    | _       -> s
 
 let parsePt2 (s: string) = 
     let digits = getDigits s
