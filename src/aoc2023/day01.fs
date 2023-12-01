@@ -10,7 +10,7 @@ let parse (s: string) =
     let digits = List.filter Char.IsDigit (Seq.toList s)
     int($"{List.head digits}{List.last digits}")
 
-let rec solvePt1 input =     
+let solvePt1 input =     
     let total = Array.sum(Array.map parse input)
     $"{total.ToString()}"
 
@@ -43,7 +43,7 @@ let parsePt2 (s: string) =
     let lastDigit  = toNumericDigit (snd digits)
     int($"{firstDigit}{lastDigit}")
 
-let rec solvePt2 input =     
+let solvePt2 input =     
     let total = Array.sum(Array.map parsePt2 input)
     $"{total.ToString()}"
 
