@@ -43,9 +43,9 @@ let solvePt1 input =
 
 let answerPt1 = solvePt1 raw
 
-let getRed (r, _, _)   = r
+let getRed   (r, _, _) = r
 let getGreen (_, g, _) = g
-let getBlue (_, _, b)  = b
+let getBlue  (_, _, b) = b
 
 let getCubePower s =
     let maxRed   = Seq.max (Seq.map getRed s)
