@@ -24,8 +24,8 @@ To start a new year...
 ----------
 
 To add a new day...
-1. create a new day file in the format `day{n}.fs`, append a 0 to single digit days
-2. name the top level module Day n, where n is the day # without an appended 0
+1. create a new day file in the format `day{n}.fs`, prepend a 0 to single digit days
+2. name the top level module Day n, where n is the day # without a prepended 0
     - just to be confusing ;) 
 3. add an entry for this new file in the project .fsproj
     - it MUST be listed before Program.fs!
