@@ -5,10 +5,7 @@ open System.Text.RegularExpressions
 
 let raw = File.ReadAllLines "day04.txt"
 
-let rec score n = 
-    match n with
-    | 0 | 1  -> n
-    | n      -> score (n - 1) * 2
+let score n = if n = 0 then 0.0 else 2 ** (float(n) - 1.0)
 
 let getWinners card =
     let matched = Regex.Match(card, @".*: ([\d\s]*) \| ([\d\s]*)")
