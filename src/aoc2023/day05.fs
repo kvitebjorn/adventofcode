@@ -36,12 +36,11 @@ let sourceToDest (maps: seq<seq<int64>>) (source: int64) =
         let lower = Seq.item 1 map
         let upper = (Seq.item 1 map) + (Seq.item 2 map)
         lower <= n && n <= upper
-    let map = Seq.filter (fun m -> isBetween source m) maps
+    let map = Seq.filter (fun m -> isBetween source m) maps |> Seq.tryHead
     match map with
-    | EmptySeq -> source
+    | None -> source
     | _  -> 
-        let m = Seq.head map
-        source - ((Seq.item 1 m) - (Seq.head m))
+        source - ((Seq.item 1 map.Value) - (Seq.head map.Value))
 let seedToLocation
     seed =
     seed |>
