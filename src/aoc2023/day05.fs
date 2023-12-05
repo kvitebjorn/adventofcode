@@ -13,14 +13,14 @@ let split s =
     (fst result)::(snd result)
 let generateSeeds seedRanges =
     seedRanges
-    |> List.chunkBySize 2
-    |> List.map (fun p -> seq { p[0]..p[0]+p[1] } |> Seq.toList)
-    |> List.reduce List.append
-let stringToInts (s: string) = List.map (fun x -> x |> int64) (s.Split(" ") |> Array.toList)
-let parseMap (m: list<string>) = List.map stringToInts m[1..]
-let seeds = List.map (fun x -> x |> int64) (raw[0].Replace("seeds: ", "").Split(" ") |> Array.toList)
+    |> Seq.chunkBySize 2
+    |> Seq.map (fun p -> seq { p[0]..p[0]+p[1] } |> Seq.toList)
+    |> Seq.fold Seq.append Seq.empty<int64>
+let stringToInts (s: string) = Seq.map (fun x -> x |> int64) (s.Split(" ") |> Array.toSeq)
+let parseMap (m: seq<string>) = Seq.map stringToInts (Seq.tail m)
+let seeds = Seq.map (fun x -> x |> int64) (raw[0].Replace("seeds: ", "").Split(" ") |> Array.toSeq)
 let seedRanges = 
-    List.map (fun x -> x |> int64) (raw[0].Replace("seeds: ", "").Split(" ") |> Array.toList)
+    Seq.map (fun x -> x |> int64) (raw[0].Replace("seeds: ", "").Split(" ") |> Array.toSeq)
 let seedsPt2 = generateSeeds seedRanges
 let maps  = split raw[2..]
 let seedToSoilMaps = parseMap maps[0]
@@ -30,17 +30,18 @@ let waterToLightMaps = parseMap maps[3]
 let lightToTemperatureMaps = parseMap maps[4]
 let temperatureToHumidityMaps = parseMap maps[5]
 let humidityToLocationMaps = parseMap maps[6]
-let sourceToDest (maps: list<list<int64>>) (source: int64) =
-    let isBetween (n: int64) (map: list<int64>) = 
-        let lower = map[1]
-        let upper = map[1] + map[2]
+let (|EmptySeq|_|) a = if Seq.isEmpty a then Some () else None
+let sourceToDest (maps: seq<seq<int64>>) (source: int64) =
+    let isBetween (n: int64) (map: seq<int64>) = 
+        let lower = Seq.item 1 map
+        let upper = (Seq.item 1 map) + (Seq.item 2 map)
         lower <= n && n <= upper
-    let map = List.filter (fun m -> isBetween source m) maps
+    let map = Seq.filter (fun m -> isBetween source m) maps
     match map with
-    | [] -> source
+    | EmptySeq -> source
     | _  -> 
-        let m = List.head map
-        source - (m[1] - m[0])
+        let m = Seq.head map
+        source - ((Seq.item 1 m) - (Seq.head m))
 let seedToLocation
     seed =
     seed |>
@@ -53,13 +54,13 @@ let seedToLocation
     sourceToDest humidityToLocationMaps
     
 let solvePt1 =
-    let lowest = List.map seedToLocation seeds |> List.min
+    let lowest = Seq.map seedToLocation seeds |> Seq.min
     $"{lowest.ToString()}"
 
 let answerPt1 = solvePt1
 
 let solvePt2 =
-    let lowest = List.map seedToLocation seedsPt2 |> List.min
+    let lowest = Seq.map seedToLocation seedsPt2 |> Seq.min
     $"{lowest.ToString()}"
 
 let answerPt2 = solvePt2
