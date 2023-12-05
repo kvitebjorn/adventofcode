@@ -14,7 +14,7 @@ let split s =
 let generateSeeds seedRanges =
     seedRanges
     |> Seq.chunkBySize 2
-    |> Seq.map (fun p -> seq { p[0]..p[0]+p[1] } |> Seq.toList)
+    |> Seq.map (fun p -> seq { p[0]..p[0]+p[1] })
     |> Seq.fold Seq.append Seq.empty<int64>
 let stringToInts (s: string) = Seq.map (fun x -> x |> int64) (s.Split(" ") |> Array.toSeq)
 let parseMap (m: seq<string>) = Seq.map stringToInts (Seq.tail m)
