@@ -10,7 +10,12 @@
     <Compile Include="day02.fs" />
     <Compile Include="day03.fs" />
     <Compile Include="day04.fs" />
+    <Compile Include="day05.fs" />
     <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MathNet.Numerics.FSharp" Version="5.0.0" />
   </ItemGroup>
 
 </Project>
