@@ -1,5 +1,3 @@
-module Day1
-
 open System.IO
 open System
 open System.Text.RegularExpressions
@@ -48,3 +46,6 @@ let solvePt2 input =
     $"{total.ToString()}"
 
 let answerPt2 = solvePt2 raw
+
+printfn "%s" answerPt1
+printfn "%s" answerPt2

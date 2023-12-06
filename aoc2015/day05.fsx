@@ -1,5 +1,3 @@
-module Day5
-
 open System.IO
 open System.Text.RegularExpressions
 
@@ -44,3 +42,6 @@ let solvePt2 input =
     |> sprintf "%i"
 
 let answerPt2 = solvePt2 raw
+
+printfn "%s" answerPt1
+printfn "%s" answerPt2

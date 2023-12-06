@@ -1,5 +1,3 @@
-module Day6
-
 let times     = [38L;94L;79L;70L]
 let distances = [241L;1549L;1074L;1091L]
 
@@ -23,3 +21,6 @@ let solvePt2 =
     $"{wins.ToString()}"
 
 let answerPt2 = solvePt2
+
+printfn "%s" answerPt1
+printfn "%s" answerPt2

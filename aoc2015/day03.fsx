@@ -1,5 +1,3 @@
-module Day3
-
 open System.IO
 
 let raw = File.ReadAllText "day03.txt"
@@ -32,3 +30,6 @@ let solvePt2 (input: list<char>) =
     $"{giftedUnion.Count}"
 
 let answerPt2 = solvePt2 (raw |> Seq.toList)
+
+printfn "%s" answerPt1
+printfn "%s" answerPt2

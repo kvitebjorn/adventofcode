@@ -1,5 +1,3 @@
-module Day1
-
 let raw = System.IO.File.ReadAllText "day01.txt"
 
 let rec solvePt1 input pos =
@@ -19,3 +17,6 @@ let rec solvePt2 input pos idx =
         | ')'::tail -> solvePt2 tail (pos - 1) (idx + 1)
         | _         -> pos.ToString()
 let answerPt2 = solvePt2 (raw |> Seq.toList) 0 0
+
+printfn "%s" answerPt1
+printfn "%s" answerPt2

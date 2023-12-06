@@ -1,5 +1,3 @@
-module Day4
-
 open System.IO
 
 let raw = File.ReadAllText "day04.txt"
@@ -28,3 +26,6 @@ let rec solvePt2 input n =
     | _ -> solvePt2 input (n+1)
 
 let answerPt2 = solvePt2 raw 0
+
+printfn "%s" answerPt1
+printfn "%s" answerPt2

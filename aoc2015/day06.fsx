@@ -1,5 +1,3 @@
-module Day6
-
 open System.IO
 open System.Text.RegularExpressions
 
@@ -72,3 +70,6 @@ let rec solvePt2 input grid =
     | _     -> sprintf "%i" (sum2dArray grid)
 
 let answerPt2 = solvePt2 (raw |> Seq.toList) (Array2D.zeroCreate 1000 1000)
+
+printfn "%s" answerPt1
+printfn "%s" answerPt2
