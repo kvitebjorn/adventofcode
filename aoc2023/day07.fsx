@@ -82,21 +82,81 @@ let solvePt1 input =
     $"{total.ToString()}"
 let answerPt1 = solvePt1 raw
 
+let counts s =  List.filter (fun c -> c <> 'J') s
+                |> List.distinct 
+                |> List.map (fun x -> List.filter (fun y -> y = x) s |> List.length) 
+                |> List.sortDescending 
+let jokers s = List.filter (fun c -> c = 'J') s |> List.length
+let isFivePt2 s = 
+    let j = jokers s
+    let k = counts s
+    isFive s || k[0] + j = 5
+let isFourPt2 s = 
+    let j = jokers s
+    let k = counts s
+    isKind 4 s || j = 3 || k[0] + j = 4 || k[k.Length-1] + j = 4
+let isFullPt2 s = 
+    let j = jokers s
+    let k = counts s
+    (isKind 3 s && isKind 2 s) || (k[0] + j = 3 && k[k.Length-1] = 2)
+
+let isThreePt2 s = 
+    let j = jokers s
+    let k = counts s
+    isKind 3 s || j = 2 || k[0] + j = 3
+let isTwoPt2 s =
+    let k = counts s 
+    (isKind 2 s && (duplicates s).Length = 2) || (k[0] = 2 && k[2] = 2)
+let isOnePt2 s = 
+    let j = jokers s
+    let k = counts s 
+    (isKind 2 s && (duplicates s).Length = 1) || j = 1
+let baseStrengthPt2 hand = 
+    match hand with
+    | hnd when isFivePt2 hnd -> 7
+    | hnd when isFourPt2 hnd -> 6
+    | hnd when isFullPt2 hnd -> 5
+    | hnd when isThreePt2 hnd -> 4
+    | hnd when isTwoPt2 hnd -> 3
+    | hnd when isOnePt2 hnd -> 2
+    | _ -> 1
+let rec groupHandsPt2 fives fours fulls threes twos ones highs hands =
+    match hands with
+    | []      -> [fives;fours;fulls;threes;twos;ones;highs]
+    | h :: hs -> 
+        let strength = fst h |> baseStrengthPt2
+        match strength with
+        | 7 -> groupHandsPt2 (h :: fives) fours fulls threes twos ones highs hs 
+        | 6 -> groupHandsPt2 fives (h :: fours) fulls threes twos ones highs hs
+        | 5 -> groupHandsPt2 fives fours (h :: fulls) threes twos ones highs hs
+        | 4 -> groupHandsPt2 fives fours fulls (h :: threes) twos ones highs hs
+        | 3 -> groupHandsPt2 fives fours fulls threes (h :: twos) ones highs hs
+        | 2 -> groupHandsPt2 fives fours fulls threes twos (h :: ones) highs hs
+        | _ -> groupHandsPt2 fives fours fulls threes twos ones (h :: highs) hs
 let cardStrengthPt2 (card: list<char>) =
     let c = card[0]
     match c with
     | 'A' -> 14
     | 'K' -> 13
     | 'Q' -> 12
-    | 'J' -> 999
+    | 'J' -> 1
     | 'T' -> 10
     | _   -> int(string(c))
-
-// TODO: need tomake J's act as wildcards, and make them weak in tie comparisons
-
+let rec compareHandsPt2 (n1: list<char>) (n2: list<char>) =
+    if n1 = n2
+        then 0
+        else
+            let n1str = cardStrengthPt2 n1
+            let n2str = cardStrengthPt2 n2
+            let equal = n1str = n2str
+            match equal with
+            | true -> compareHandsPt2 (List.tail n1) (List.tail n2) 
+            | _    -> compare n1str n2str
+let compareEntriesPt2(n1: list<char>, s1: int) (n2: list<char>, s2: int) =
+    compareHandsPt2 n1 n2
 let solvePt2 input =
     let hands = Array.map parse input |> Array.toList
-    let grouped = groupHands [] [] [] [] [] [] [] hands
+    let grouped = groupHandsPt2 [] [] [] [] [] [] [] hands
     let fives = List.sortWith compareEntriesPt2 grouped[0]
     let fours = List.sortWith compareEntriesPt2 grouped[1]
     let fulls = List.sortWith compareEntriesPt2 grouped[2]
