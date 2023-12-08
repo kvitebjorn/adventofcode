@@ -1,4 +1,7 @@
+open System
 open System.IO
+open System.Linq
+open System.Collections.Concurrent
 
 let raw = File.ReadAllLines "day05.txt"
 
@@ -35,13 +38,12 @@ let solvePt1 =
     stopWatch.Stop()
     printfn "%f" stopWatch.Elapsed.TotalMilliseconds
     $"{lowest.ToString()}"
-
 let answerPt1 = solvePt1
 printfn "%s" answerPt1
 
 (* TODO: get rid of seedRanges, seedsPt2, etc. create a new starting map instead, 
          and work on ranges instead of ints
- *)
+*)
 let seedRanges = 
     Seq.map (fun x -> x |> int64) (raw[0].Replace("seeds: ", "").Split(" ") |> Array.toSeq)
 let seedsPt2 =
@@ -49,13 +51,18 @@ let seedsPt2 =
     |> Seq.chunkBySize 2
     |> Seq.map (fun p -> seq { p[0]..p[0]+p[1] })
     |> Seq.fold Seq.append Seq.empty<int64>
-
 let solvePt2 =
     let stopWatch = System.Diagnostics.Stopwatch.StartNew()
-    let lowest = Seq.map (fun s -> seedToLocation 0 s) seedsPt2 |> Seq.min
+    let mutable results = new ConcurrentBag<int64>()
+    seedsPt2
+        .AsParallel()
+        .WithDegreeOfParallelism(int(ceil((float(Environment.ProcessorCount) * 0.75) * 2.0)))
+        .ForAll((fun s -> 
+                    let result = seedToLocation 0 s
+                    results.Add(int64(result))))
+    let lowest = Seq.toList results |> Seq.min
     stopWatch.Stop()
     printfn "%f" stopWatch.Elapsed.TotalMilliseconds
     $"{lowest.ToString()}"
-
 let answerPt2 = solvePt2
 printfn "%s" answerPt2
