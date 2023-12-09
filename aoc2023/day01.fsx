@@ -2,7 +2,7 @@ open System.IO
 open System
 open System.Text.RegularExpressions
 
-let raw = File.ReadAllLines "day01.txt"
+let raw = File.ReadAllLines "input.txt"
 
 let parse (s: string) = 
     let digits = List.filter Char.IsDigit (Seq.toList s)

@@ -1,6 +1,6 @@
 open System.IO
 
-let input = File.ReadAllLines "day09.txt" 
+let input = File.ReadAllLines "input.txt" 
             |> Array.toList
             |> List.map (fun s -> s.ToString().Split(" ") 
                                 |> Array.toList 

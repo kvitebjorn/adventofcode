@@ -1,7 +1,7 @@
 open System.IO
 open System.Text.RegularExpressions
 
-let raw = File.ReadAllLines "day06.txt"
+let raw = File.ReadAllLines "input.txt"
 
 let sum2dArray (grid: int[,]) = 
     let mutable sum = 0

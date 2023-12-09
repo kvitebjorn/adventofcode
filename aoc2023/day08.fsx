@@ -4,7 +4,7 @@ open System.Collections.Generic
 open System.Linq
 open System.Collections.Concurrent
 
-let raw = File.ReadAllLines "day08.txt"
+let raw = File.ReadAllLines "input.txt"
 let directions = raw[0] |> Seq.map (fun c -> if c = 'L' then 0 else 1) |> Seq.toList
 let nodes = new Dictionary<string, list<string>>()
 let _ = [for line in raw[2..] do 

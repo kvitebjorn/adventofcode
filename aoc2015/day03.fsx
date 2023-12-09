@@ -1,6 +1,6 @@
 open System.IO
 
-let raw = File.ReadAllText "day03.txt"
+let raw = File.ReadAllText "input.txt"
 
 let rec deliver input (houses : Set<(int*int)>) x y =
     match input with

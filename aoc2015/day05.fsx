@@ -1,7 +1,7 @@
 open System.IO
 open System.Text.RegularExpressions
 
-let raw = File.ReadAllLines "day05.txt"
+let raw = File.ReadAllLines "input.txt"
 
 let vowelPredicate (s: string) = 
     Regex.Matches(s, @"[aeiou]").Count >= 3

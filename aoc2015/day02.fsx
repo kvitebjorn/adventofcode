@@ -1,7 +1,7 @@
 open System.IO
 open System.Text.RegularExpressions
 
-let raw = File.ReadAllLines "day02.txt"
+let raw = File.ReadAllLines "input.txt"
 
 let measure present=
     let matched = Regex.Match(present, @"(\d+)x(\d+)x(\d+)")

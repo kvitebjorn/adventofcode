@@ -1,7 +1,7 @@
 open System.IO
 open System.Text.RegularExpressions
 
-let raw = File.ReadAllLines "day04.txt"
+let raw = File.ReadAllLines "input.txt"
 
 let score n = if n = 0 then 0.0 else 2 ** (float(n) - 1.0)
 

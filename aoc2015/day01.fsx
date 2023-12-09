@@ -1,4 +1,4 @@
-let raw = System.IO.File.ReadAllText "day01.txt"
+let raw = System.IO.File.ReadAllText "input.txt"
 
 let rec solvePt1 input pos =
     match input with 

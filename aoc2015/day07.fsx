@@ -1,6 +1,6 @@
 open System.IO
 
-let raw = File.ReadAllLines "day07.txt"
+let raw = File.ReadAllLines "input.txt"
 
 let rec solvePt1 input = "TODO"
 

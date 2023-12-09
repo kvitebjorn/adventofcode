@@ -1,6 +1,6 @@
 open System.IO
 
-let raw = File.ReadAllLines "day07.txt"
+let raw = File.ReadAllLines "input.txt"
 let parse (s: string) = 
     let splitted = s.Split(" ")
     (splitted[0] |> Seq.toList, int(splitted[1]))

@@ -1,7 +1,7 @@
 open System.IO
 open System.Text.RegularExpressions
 
-let raw = File.ReadAllText "day03.txt"
+let raw = File.ReadAllText "input.txt"
 
 let getIndices input regex =
     seq { for m in Regex.Matches(input, regex) do yield m.Value, m.Index }

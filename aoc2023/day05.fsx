@@ -3,7 +3,7 @@ open System.IO
 open System.Linq
 open System.Collections.Concurrent
 
-let raw = File.ReadAllLines "day05.txt"
+let raw = File.ReadAllLines "input.txt"
 
 let split s =
     let folder a (cur, acc) = 

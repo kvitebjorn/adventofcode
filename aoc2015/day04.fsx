@@ -1,6 +1,6 @@
 open System.IO
 
-let raw = File.ReadAllText "day04.txt"
+let raw = File.ReadAllText "input.txt"
 
 let doMd5 input n =
     use md5 = System.Security.Cryptography.MD5.Create()
