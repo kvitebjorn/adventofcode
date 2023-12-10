@@ -3,16 +3,14 @@ open System
 open System.Text.RegularExpressions
 
 let raw = File.ReadAllLines "input.txt"
-
 let parse (s: string) = 
     let digits = List.filter Char.IsDigit (Seq.toList s)
     int($"{List.head digits}{List.last digits}")
-
 let solvePt1 input =     
     let total = Array.sum(Array.map parse input)
     $"{total.ToString()}"
-
 let answerPt1 = solvePt1 raw
+printfn "%s" answerPt1
 
 let getDigits s =
     let regexStr = @"([1-9]|one|two|three|four|five|six|seven|eight|nine)"
@@ -21,7 +19,6 @@ let getDigits s =
     let first = matched.Groups[1].Value
     let last  = matched2.Groups[1].Value
     (first,last)
-
 let toNumericDigit s =
     match s with
     | "one"   -> "1"
@@ -34,18 +31,13 @@ let toNumericDigit s =
     | "eight" -> "8"
     | "nine"  -> "9"
     | _       -> s
-
 let parsePt2 (s: string) = 
     let digits = getDigits s
     let firstDigit = toNumericDigit (fst digits)
     let lastDigit  = toNumericDigit (snd digits)
     int($"{firstDigit}{lastDigit}")
-
 let solvePt2 input =     
     let total = Array.sum(Array.map parsePt2 input)
     $"{total.ToString()}"
-
 let answerPt2 = solvePt2 raw
-
-printfn "%s" answerPt1
 printfn "%s" answerPt2

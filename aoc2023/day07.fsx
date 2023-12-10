@@ -81,6 +81,7 @@ let solvePt1 input =
     let total = List.mapi (fun i (_, bid) -> (i + 1) * bid) sorted |> List.sum
     $"{total.ToString()}"
 let answerPt1 = solvePt1 raw
+printfn "%s" answerPt1
 
 let counts s =  List.filter (fun c -> c <> 'J') s
                 |> List.distinct 
@@ -99,7 +100,6 @@ let isFullPt2 s =
     let j = jokers s
     let k = counts s
     (isKind 3 s && isKind 2 s) || (k[0] + j = 3 && k[k.Length-1] = 2)
-
 let isThreePt2 s = 
     let j = jokers s
     let k = counts s
@@ -168,6 +168,4 @@ let solvePt2 input =
     let total = List.mapi (fun i (_, bid) -> (i + 1) * bid) sorted |> List.sum
     $"{total.ToString()}"
 let answerPt2 = solvePt2 raw
-
-printfn "%s" answerPt1
 printfn "%s" answerPt2

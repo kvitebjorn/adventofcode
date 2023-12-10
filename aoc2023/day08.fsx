@@ -14,7 +14,6 @@ let _ = [for line in raw[2..] do
                 let l = lr[0][1..]
                 let r = lr[1][..2]
                 nodes.Add(node, [l;r])]
-
 let rec solvePt1 node step acc =
     let lr = nodes[node]
     let nextNode = lr[directions[step]]

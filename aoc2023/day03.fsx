@@ -2,16 +2,12 @@ open System.IO
 open System.Text.RegularExpressions
 
 let raw = File.ReadAllText "input.txt"
-
 let getIndices input regex =
     seq { for m in Regex.Matches(input, regex) do yield m.Value, m.Index }
-
 let toCoord idx length =
     (idx % length, idx / length)
-
 let isAdjacent (x1,y1) (x2,y2) = 
     abs(x1 - x2) <= 1 && abs(y1 - y2) <= 1
-
 let solvePt1 (rawInput: string) =
     let length  = rawInput.IndexOf('\n') + 1
     let input   = rawInput.Replace('\n', '.')
@@ -27,8 +23,8 @@ let solvePt1 (rawInput: string) =
     let validNumbers = Seq.filter isValidNum numbers
     let total = Seq.sum (Seq.map (fun x -> int(fst x)) validNumbers)
     $"{total.ToString()}"
-
 let answerPt1 = solvePt1 raw
+printfn "%s" answerPt1
 
 let solvePt2 (rawInput: string) =
     let length     = rawInput.IndexOf('\n') + 1
@@ -47,8 +43,5 @@ let solvePt2 (rawInput: string) =
     let gearRatios = Seq.map (fun nums -> Seq.fold (*) 1 (Seq.map (fun num -> int(fst num)) nums)) validGears
     let total = Seq.sum gearRatios
     $"{total.ToString()}"
-
 let answerPt2 = solvePt2 raw
-
-printfn "%s" answerPt1
 printfn "%s" answerPt2

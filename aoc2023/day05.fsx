@@ -4,7 +4,6 @@ open System.Linq
 open System.Collections.Concurrent
 
 let raw = File.ReadAllLines "input.txt"
-
 let split s =
     let folder a (cur, acc) = 
         match a with
@@ -31,7 +30,6 @@ let rec seedToLocation stage seed =
     match stage with
     | 6 -> dest
     | _ -> seedToLocation (stage + 1) dest
-
 let solvePt1 =
     let stopWatch = System.Diagnostics.Stopwatch.StartNew()
     let lowest = Seq.map (fun s -> seedToLocation 0 s) seeds |> Seq.min
