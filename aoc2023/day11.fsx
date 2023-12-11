@@ -47,8 +47,8 @@ let dist p0 p1 expansionFactor =
     let ayX = aY - spanningAY.Count + spanningAY.Count * expansionFactor
     let bxX = bX - spanningBX.Count + spanningBX.Count * expansionFactor
     let byX = bY - spanningBY.Count + spanningBY.Count * expansionFactor
-    let dx = abs(axX- bxX) |> int64
-    let dy = abs(ayX- byX) |> int64
+    let dx = abs(axX - bxX) |> int64
+    let dy = abs(ayX - byX) |> int64
     dx + dy
 let sum = List.map (fun (p: list<int>) -> dist p[0] p[1] 2) pairsToTry |> List.sum
 printfn $"{sum}"
