@@ -65,5 +65,4 @@ let isEnclosed n =
     let intersections = Set.filter (fun b -> vx b > vx n && vy b = vy n) boundaryLoopNodes
     intersections.Count % 2 = 1
 let enclosed = Set.filter isEnclosed nonLoopNodes
-
 printfn "%s" $"{enclosed.Count}"
