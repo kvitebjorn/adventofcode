@@ -37,31 +37,18 @@ let rec pairs n l =
     | k, (x::xs) -> List.map ((@) [x]) (pairs (k-1) xs) @ pairs k xs
 let pairsToTry = pairs 2 [1..counter]
 let dist p0 p1 expansionFactor =
-    // obviously could be more elegant with zips and pairs but it's 2am lol
-    let galaxyA = galaxies[p0]
-    let galaxyB = galaxies[p1]
-    let aX = fst galaxyA
-    let aY = snd galaxyA
-    let bX = fst galaxyB
-    let bY = snd galaxyB
+    let (aX, aY) = galaxies[p0]
+    let (bX, bY) = galaxies[p1]
     let spanningAX = Set.intersect expandedCols (Set([0..aX]))
     let spanningAY = Set.intersect expandedRows (Set([0..aY]))
     let spanningBX = Set.intersect expandedCols (Set([0..bX]))
     let spanningBY = Set.intersect expandedRows (Set([0..bY]))
-    let axX = spanningAX.Count * expansionFactor
-    let ayX = spanningAY.Count * expansionFactor
-    let axZ = aX - spanningAX.Count
-    let ayZ = aY - spanningAY.Count
-    let bxX = spanningBX.Count * expansionFactor
-    let byX = spanningBY.Count * expansionFactor
-    let bxZ = bX - spanningBX.Count
-    let byZ = bY - spanningBY.Count
-    let newAX = axX + axZ
-    let newAY = ayX + ayZ
-    let newBX = bxX + bxZ
-    let newBY = byX + byZ
-    let dx = abs(newAX - newBX) |> int64
-    let dy = abs(newAY - newBY) |> int64
+    let axX = aX - spanningAX.Count + spanningAX.Count * expansionFactor
+    let ayX = aY - spanningAY.Count + spanningAY.Count * expansionFactor
+    let bxX = bX - spanningBX.Count + spanningBX.Count * expansionFactor
+    let byX = bY - spanningBY.Count + spanningBY.Count * expansionFactor
+    let dx = abs(axX- bxX) |> int64
+    let dy = abs(ayX- byX) |> int64
     dx + dy
 let sum = List.map (fun (p: list<int>) -> dist p[0] p[1] 2) pairsToTry |> List.sum
 printfn $"{sum}"
