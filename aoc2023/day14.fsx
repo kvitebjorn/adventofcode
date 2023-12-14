@@ -25,15 +25,6 @@ let rec slideRocks arr i acc =
 let tilt m = 
     [ for columnIndex in [0..Array2D.length2 m - 1] do 
         yield slideRocks m[*,columnIndex] 0 Array.empty ] |> array2D |> transpose
-let rec sokoban m = 
-    let up    = tilt m
-    let down  = rotate 180 m |> tilt |> rotate 180
-    let left  = rotate 90  m |> tilt |> rotate -90
-    let right = rotate -90 m |> tilt |> rotate 90
-    // TODO: return on acceptance criteria, otherwise let it die off
-    // WOW!!! they only have to roll north!!! LOL fml - i should read
-    // i wanna keep these matrix functions so ima just leave this idea here...
-    0
 let score row c = Array.filter (fun x -> x = 'O') row |> Array.length |> (fun x -> x * c)
 let total = 
     let solved = tilt input
@@ -41,3 +32,16 @@ let total =
                     yield score solved[rowIndex, *] (Array2D.length1 input - rowIndex) ]
     List.sum scores
 printfn $"{total}"
+
+let rec totalPt2 m count =
+    if count < 1000000000 then 
+        let up    = tilt m
+        let left  = rotate 90 up    |> tilt |> rotate -90
+        let down  = rotate 180 left |> tilt |> rotate 180
+        let right = rotate -90 down |> tilt |> rotate 90
+        totalPt2 right (count + 1)
+    else
+        let scores = [ for rowIndex in [0..Array2D.length1 input - 1] do 
+                        yield score m[rowIndex, *] (Array2D.length1 input - rowIndex) ]
+        List.sum scores
+printfn $"{totalPt2 input 0}"
