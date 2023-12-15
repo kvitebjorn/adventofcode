@@ -33,15 +33,33 @@ let total =
     List.sum scores
 printfn $"{total}"
 
-let rec totalPt2 m count =
-    if count < 1000000000 then 
+let tortoiseAndHare list = 
+    let mutable returnVal = (false, -1, -1)
+    if List.length list < 2 then returnVal
+    else
+        let mutable tortoise = 0
+        let mutable hare     = 1
+        let mutable cont     = true
+        while (((hare + 1) < list.Length) && cont) do
+            if list[tortoise] = list[hare] then
+                returnVal <- (true, tortoise, hare)
+                cont <- false
+            else 
+                tortoise <- tortoise + 1
+                hare <- hare + 2
+        returnVal
+let rec totalPt2 m count acc =
+    let (hasCycle, i, j) = tortoiseAndHare acc
+    if hasCycle then
+        let delta = 1000000000 % (i - j)
+        acc[i + delta + 1]
+    else
         let up    = tilt m
         let left  = rotate 90 up    |> tilt |> rotate -90
         let down  = rotate 180 left |> tilt |> rotate 180
         let right = rotate -90 down |> tilt |> rotate 90
-        totalPt2 right (count + 1)
-    else
-        let scores = [ for rowIndex in [0..Array2D.length1 input - 1] do 
+        let score = [ for rowIndex in [0..Array2D.length1 input - 1] do 
                         yield score m[rowIndex, *] (Array2D.length1 input - rowIndex) ]
-        List.sum scores
-printfn $"{totalPt2 input 0}"
+                    |> List.sum
+        totalPt2 right (count + 1) (acc @ [score])
+printfn $"{totalPt2 input 0 []}"
