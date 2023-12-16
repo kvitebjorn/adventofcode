@@ -15,7 +15,7 @@ let doTheThing (line: string) (nums: int array) =
     let line = line + "."
     let nums = Array.append nums [|0|] |> Array.rev
     let (m, n) = (nums.Length, line.Length)
-    let table = Array2D.create m (n + 1) 0
+    let table = Array2D.create m (n + 1) 0L
     let mutable j = n - 1
     while j >= 0 && (line[j] = '?' || line[j] = '.') do
         table[0, j + 1] <- 1
@@ -31,7 +31,7 @@ let doTheThing (line: string) (nums: int array) =
             | '#' -> table[i, j] <- dmg i j
             | '?' -> table[i, j] <- dmg i j + op i j
             | _   -> ()
-    table[m - 1, 0]
+    table[m - 1, 0] |> int64
 let arrangements i = Array.map (fun (line, nums) -> doTheThing line nums) i |> Array.sum
 let total = arrangements input
 printfn $"{total}"
