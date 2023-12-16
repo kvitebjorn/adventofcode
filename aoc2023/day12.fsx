@@ -41,7 +41,5 @@ let newInput =
         let newLine = sprintf "%s?%s?%s?%s?%s" line line line line line
         let newNums = Array.replicate 5 nums |> Array.concat
         (newLine, newNums)) input
-
-// TODO: stupid int overflow
 let totalPt2 = arrangements newInput
 printfn $"{totalPt2}"

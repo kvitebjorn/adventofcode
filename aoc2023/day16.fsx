@@ -7,9 +7,6 @@ let isRight (r1, c1) (r2, c2) = r2 = r1 && c2 = (c1 + 1)
 let isLeft (r1, c1) (r2, c2) = r2 = r1 && c2 = (c1 - 1)
 let mutable energized = Array2D.zeroCreate (Array2D.length1 input) (Array2D.length2 input)
 let mutable seen = Set.empty<(int * int) * (int * int)>
-
-// this is absolutely disgusting but i'm really tired.
-// maybe i'll come back some day and find a more elegant way of writing this.
 let rec trace grid pos prev =
     let (row, col) = pos
     let inBounds = row >= 0 && col >= 0 
@@ -82,9 +79,8 @@ let corners = [ (0,0),
 // ummm.... i was testing timing for 1/4 of the problem space
 // and input the answer for giggles... and it happened to be right LMAO
 // 
-// theoretically, for this to work with any input data, you'd have to check EVERY perimeter coord :)
-// NOT only the top row, like i got away with here...
-// it still only took 1 second, jus' sayin'. i guess i saved myself 3s
+// for this to work with any input data, you'd have to check EVERY perimeter coord :)
+// NOT only the top row, like i got away with here... see the `corners` i started above...
 let mutable biggest = -1
 for i in [0..110] do
     energized <- Array2D.zeroCreate (Array2D.length1 input) (Array2D.length2 input)
