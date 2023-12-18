@@ -30,7 +30,8 @@ let isInBounds maxMoves grid (col, row, _, moves) =
 let InitialNode =
     { visited  = false
       distance = Int32.MaxValue }
-let dijkstra minMoves maxMoves cost (sCol, sRow) target =
+let cost (col, row, _, _) = input[row,col]
+let dijkstra minMoves maxMoves (sCol, sRow) target =
     let grid = Array4D.create nCols nRows 4 (maxMoves + 1) InitialNode
     let queue = PriorityQueue<int * int * int * int, int>()
     let dirs = seq { 0..3 }
@@ -68,9 +69,9 @@ let dijkstra minMoves maxMoves cost (sCol, sRow) target =
     visit ()
 let start = (0, 0)
 let shortest =
-    dijkstra 0 3 (fun (col, row, _, _) -> input[row,col]) start (nCols - 1, nRows - 1)
+    dijkstra 0 3 start (nCols - 1, nRows - 1)
 printfn $"{shortest}"
 
 let shortestPt2 =
-    dijkstra 4 10 (fun (col, row, _, _) -> input[row,col]) start (nCols - 1, nRows - 1)
+    dijkstra 4 10 start (nCols - 1, nRows - 1)
 printfn $"{shortestPt2}"
