@@ -33,17 +33,18 @@ let InitialNode =
 let dijkstra minMoves maxMoves cost (sCol, sRow) target =
     let grid = Array4D.create nCols nRows 4 (maxMoves + 1) InitialNode
     let queue = PriorityQueue<int * int * int * int, int>()
-    for dir in 0..3 do
+    let dirs = seq { 0..3 }
+    for dir in dirs do
         queue.Enqueue((sCol, sRow, dir, 0), 0)
         grid[sCol, sRow, dir, 0] <-
             { grid[sCol, sRow, dir, 0] with
                 distance = 0 }
     let isVisited (col, row, dir, moves) = grid[col, row, dir, moves].visited
     let dist (col, row, dir, moves) = grid[col, row, dir, moves].distance
-    let minDist (x, y) =
-        [ for dir in 0..3 do
+    let minDist (col, row) =
+        [ for dir in dirs do
               for moves in 0..maxMoves do
-                  dist (x, y, dir, moves) ]
+                  dist (col, row, dir, moves) ]
         |> Seq.min
     let rec visit () =
         match queue.Count, queue.Dequeue() with
