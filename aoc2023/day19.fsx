@@ -30,7 +30,7 @@ let makeExpression (body: string) =
         f
     else
         let goto = body
-        let f = (fun (p: Part) -> goto)
+        let f = (fun _ -> goto)
         f
 let makeFn (body: string) = 
     let expressions' = body.Split(",")
