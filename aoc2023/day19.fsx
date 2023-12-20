@@ -125,19 +125,19 @@ type Node =
         right: Option<Node>;
         depth: int;
     }
-type XmasRange = 
-    {
-        x: (int * int);
-        m: (int * int);
-        a: (int * int);
-        s: (int * int);
-    }
+type Interval = { A: int; B: int }
+let intersect (interval1: Interval) (interval2: Interval) =
+    { A = max interval1.A interval2.A; B = min interval1.B interval2.B }
+type XmasMap = Map<string, Interval>
 let mutable sumPt2 = 0L
-let rec tree goto priority' depth' xmas =
+let rec tree goto priority' depth' (xmasMap: XmasMap) =
     match goto with
     | "A" -> 
-            // TODO: sum all the xmas map ranges here
-            //       need to pass them along, they can get modified along the way
+            sumPt2 <- sumPt2 + 
+                        int64(xmasMap.["x"].B - xmasMap.["x"].A + 1) *
+                        int64(xmasMap.["m"].B - xmasMap.["m"].A + 1) *
+                        int64(xmasMap.["a"].B - xmasMap.["a"].A + 1) *
+                        int64(xmasMap.["s"].B - xmasMap.["s"].A + 1)
             {  
                 name = goto 
                 priority = None
@@ -156,10 +156,21 @@ let rec tree goto priority' depth' xmas =
     | _ -> 
         if priority' = wfNameToExpressions[goto].Length then None
         else
-            let xmas' = xmas
-            let expr   = (wfNameToExpressions[goto][priority']).goto
-            let left'  = tree expr 0 (depth' + 1) xmas'
-            let right' = tree goto (priority' + 1) (depth' + 1) xmas'
+            let expr   = wfNameToExpressions[goto][priority']
+            let isLessOp = expr.op = Some("<")
+            let isExpr = expr.var.IsSome
+            
+            let xmasMapLeft = 
+                match isExpr with
+                | true -> xmasMap |> Map.map (fun k v -> if k = expr.var.Value then intersect v (if isLessOp then { A = 1; B = expr.num.Value - 1 } else { A = expr.num.Value + 1; B = 4000 }) else v)
+                | _ -> xmasMap
+            let left'  = tree expr.goto 0 (depth' + 1) xmasMapLeft
+            let xmasMapRight =
+                match isExpr with
+                | true -> 
+                    xmasMap |> Map.map (fun k v -> if k = expr.var.Value then intersect v (if isLessOp then { A = expr.num.Value; B = 4000 } else { A = 1; B = expr.num.Value }) else v)
+                | _ -> xmasMap
+            let right' = tree goto (priority' + 1) (depth' + 1) xmasMapRight
             { 
                 name = goto
                 priority = priority' |> Some
@@ -167,12 +178,12 @@ let rec tree goto priority' depth' xmas =
                 right = right' 
                 depth = depth'
             } |> Some
-let initialXmas = 
-    {
-        x = (1, 4000)
-        m = (1, 4000)
-        a = (1, 4000)
-        s = (1, 4000)
-    }
-let tree' = tree "in" 0 0 initialXmas
+let xmasMap =
+    Map.ofList [
+        "x", { A = 1; B = 4000 };
+        "m", { A = 1; B = 4000 };
+        "a", { A = 1; B = 4000 };
+        "s", { A = 1; B = 4000 }
+    ]
+let tree' = tree "in" 0 0 xmasMap
 printfn $"{sumPt2}"
