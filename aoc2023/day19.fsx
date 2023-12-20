@@ -2,7 +2,15 @@ open System.IO
 open System.Collections.Generic
 open System.Text.RegularExpressions
 
-type Part = { x: int; m: int; a: int; s: int; mutable wf: string; mutable result: Option<string> }
+type Part = 
+    { 
+        x: int; 
+        m: int; 
+        a: int; 
+        s: int; 
+        mutable wf: string; 
+        mutable result: Option<string> 
+    }
 let input = File.ReadAllLines "input.txt"
 let (rawWorkflows, rawParts) = 
     let idx = Array.findIndex (fun l -> l = "") input
@@ -70,3 +78,101 @@ for partNum in [0..i - 1] do
 let accepted = Seq.filter (fun p -> p.result.IsSome && p.result.Value = "A") parts.Values
 let sum = Seq.map (fun p -> p.x + p.m + p.a + p.s) accepted |> Seq.sum
 printfn $"{sum}"
+
+type Expression = 
+    { 
+        priority: int;
+        var: Option<string>; 
+        op: Option<string>; 
+        num: Option<int>; 
+        goto: string 
+    }
+let mutable wfNameToExpressions = Dictionary<string, list<Expression>>()
+let parseExpression idx body =
+    let matched = Regex.Match(body, @"(\w)([>|<|])(\d+):(\w+)")
+    if matched.Length > 0 then
+        let var' = matched.Groups[1].Value
+        let op'  = matched.Groups[2].Value
+        let num' = matched.Groups[3].Value |> int
+        let goto'  = matched.Groups[4].Value
+        {
+            priority = idx + 1
+            var = Some(var')
+            op = Some(op')
+            num = Some(num')
+            goto = goto'
+        }
+    else
+        let goto' = body
+        {
+            priority = idx + 1
+            var = None
+            op = None
+            num = None
+            goto = goto'
+        }
+for wf in rawWorkflows do
+    let matched = Regex.Match(wf, @"(\w+)\{(.*)\}")
+    let name = matched.Groups[1].Value
+    let body = matched.Groups[2].Value
+    let expressions = body.Split(",") |> Array.mapi parseExpression |> Array.toList
+    wfNameToExpressions.Add(name, expressions)
+type Node = 
+    { 
+        name: string; 
+        priority: Option<int>; 
+        left: Option<Node>; 
+        right: Option<Node>;
+        depth: int;
+    }
+type XmasRange = 
+    {
+        x: (int * int);
+        m: (int * int);
+        a: (int * int);
+        s: (int * int);
+    }
+let mutable sumPt2 = 0L
+let rec tree goto priority' depth' xmas =
+    match goto with
+    | "A" -> 
+            // TODO: sum all the xmas map ranges here
+            //       need to pass them along, they can get modified along the way
+            {  
+                name = goto 
+                priority = None
+                left  = None 
+                right = None 
+                depth = depth'
+            } |> Some
+    | "R" -> 
+            { 
+                name = goto 
+                priority = None
+                left  = None 
+                right = None 
+                depth = depth'
+            } |> Some
+    | _ -> 
+        if priority' = wfNameToExpressions[goto].Length then None
+        else
+            let xmas' = xmas
+            let expr   = (wfNameToExpressions[goto][priority']).goto
+            let left'  = tree expr 0 (depth' + 1) xmas'
+            let right' = tree goto (priority' + 1) (depth' + 1) xmas'
+            { 
+                name = goto
+                priority = priority' |> Some
+                left  = left'
+                right = right' 
+                depth = depth'
+            } |> Some
+let initialXmas = 
+    {
+        x = (1, 4000)
+        m = (1, 4000)
+        a = (1, 4000)
+        s = (1, 4000)
+    }
+let tree' = tree "in" 0 0 initialXmas
+printfn $"{sumPt2}"
