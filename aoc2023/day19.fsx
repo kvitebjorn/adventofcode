@@ -162,13 +162,24 @@ let rec tree goto priority' depth' (xmasMap: XmasMap) =
             
             let xmasMapLeft = 
                 match isExpr with
-                | true -> xmasMap |> Map.map (fun k v -> if k = expr.var.Value then intersect v (if isLessOp then { A = 1; B = expr.num.Value - 1 } else { A = expr.num.Value + 1; B = 4000 }) else v)
+                | true -> xmasMap 
+                        |> Map.map (fun k v -> 
+                        if k = expr.var.Value 
+                            then intersect v 
+                                    (if isLessOp 
+                                        then { A = 1; B = expr.num.Value - 1 } 
+                                        else { A = expr.num.Value + 1; B = 4000 }) else v)
                 | _ -> xmasMap
             let left'  = tree expr.goto 0 (depth' + 1) xmasMapLeft
             let xmasMapRight =
                 match isExpr with
-                | true -> 
-                    xmasMap |> Map.map (fun k v -> if k = expr.var.Value then intersect v (if isLessOp then { A = expr.num.Value; B = 4000 } else { A = 1; B = expr.num.Value }) else v)
+                | true -> xmasMap 
+                        |> Map.map (fun k v -> 
+                        if k = expr.var.Value 
+                            then intersect v 
+                                    (if isLessOp 
+                                        then { A = expr.num.Value; B = 4000 } 
+                                        else { A = 1; B = expr.num.Value }) else v)
                 | _ -> xmasMap
             let right' = tree goto (priority' + 1) (depth' + 1) xmasMapRight
             { 
