@@ -92,7 +92,9 @@ type Module =
 
 let apply2 f g x = (f x, g x)
 
-let start limit modules =
+let start limit machine =
+    printfn "start %A" machine
+
     let initialButtonPulse =
         { Source = Name "button"
           Destination = Name "broadcaster"
@@ -123,7 +125,7 @@ let start limit modules =
             let pulses', modules' = pushButton modules
             Some((pulses', pushCount), (pushCount + 1, modules', pulses'))
 
-    (1, modules, Seq.empty)
+    (1, machine, Seq.empty)
     |> Seq.unfold pushButtonAgain
     |> apply2 (Seq.collect fst) (Seq.map snd)
 
@@ -164,59 +166,38 @@ let rec modules data acc =
 
         modules (Array.tail data) (m :: acc)
 
-let mutable machine = Map.empty
+let rec connect idx (machine: Map<Name, Module>) (ms: list<(Name * Module)>) =
+    let isInBounds = idx < ms.Length
 
-let rec connect (ms: list<(Name * Module)>) =
-    match ms with
-    | [] -> machine
-    | _ ->
-        let m = List.head ms
-        match m with
-        | Conjunction -> 
-            machine <- machine.Add(m)
-        | _ ->
-            machine <- machine.Add(m)
-        connect (List.tail ms)
+    match isInBounds with
+    | false -> machine
+    | true ->
+        let mutable machine' = machine
+        let m = ms[idx]
 
-// TODO: for quick testing purposes to avoid parsing loll *remove after parsing done*
-//       in other words, these are the examples, hard-coded into my typesystem,
-//       for quick iterative algorithm development in the REPL etc.
-let broadcaster' =
-    Broadcaster { Broadcaster.Destinations = [ Name "a"; Name "b"; Name "c" ] }
+        match (snd m) with
+        | Conjunction _ ->
+            let sources =
+                ms
+                |> Seq.filter (fun (_, x) -> List.contains (fst m) x.Destinations)
+                |> Seq.map fst
+                |> Seq.map (fun n -> (n, Low))
+                |> Map
 
-let a' =
-    FlipFlop
-        { State = Off
-          Destinations = [ Name "b" ] }
+            let updatedConjunction =
+                Conjunction
+                    { SourcePulses = sources
+                      Destinations = (snd m).Destinations }
 
-let b' =
-    FlipFlop
-        { State = Off
-          Destinations = [ Name "c" ] }
+            let connected = (fst m, updatedConjunction)
+            machine' <- machine.Add(connected)
+        | _ -> machine' <- machine.Add(m)
 
-let c' =
-    FlipFlop
-        { State = Off
-          Destinations = [ Name "inv" ] }
-
-let inv' =
-    Conjunction
-        { SourcePulses = Map.empty
-          Destinations = [ Name "a" ] }
-
-let connect' ms =
-    let mutable machine' = Map.empty
-    machine' <- machine'.Add(Name "broadcaster", broadcaster')
-    machine' <- machine'.Add(Name "a", a')
-    machine' <- machine'.Add(Name "b", b')
-    machine' <- machine'.Add(Name "c", c')
-    machine' <- machine'.Add(Name "inv", inv')
-    machine'
-// END TODO - remove this!
+        connect (idx + 1) machine' ms
 
 let total =
     modules input []
-    |> connect
+    |> connect 0 Map.empty
     |> start 1000
     |> fst
     |> Seq.groupBy (fun p -> p.Type)
