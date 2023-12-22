@@ -131,7 +131,7 @@ let start limit machine =
 
 let parseDestinations line =
     let matched = Regex.Match(line, @"-> (.*)")
-    let destinations = matched.Groups[1].Value.ToString().Split(',') |> Array.toList
+    let destinations = matched.Groups[1].Value.ToString().Split(", ") |> Array.toList
     List.map (fun d -> Name d) destinations
 
 let parseFlipFlop line name =
