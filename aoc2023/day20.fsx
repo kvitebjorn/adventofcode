@@ -115,7 +115,7 @@ let start limitFn machine =
         |> apply2 (Seq.map fst) (Seq.last >> snd)
 
     let pushButtonAgain (pushCount, modules, pulses) =
-        let stopPushing = limitFn(pushCount, modules, pulses)
+        let stopPushing = limitFn (pushCount, modules, pulses)
 
         match stopPushing with
         | true -> None
@@ -204,19 +204,29 @@ let total =
 
 printfn $"{total}"
 
-let lcm a b = a * b / bigint.GreatestCommonDivisor(a,b)
+let lcm a b =
+    a * b / bigint.GreatestCommonDivisor(a, b)
+
 let totalPt2 =
     let machine = modules input [] |> connect 0 Map.empty
-    let connectedToRx (machine: Map<Name, Module>) = 
-        Map.values machine 
-        |> Seq.filter (fun m -> m.Destinations |> List.contains (Name "rx")) 
+
+    let connectedToRx (machine: Map<Name, Module>) =
+        Map.values machine
+        |> Seq.filter (fun m -> m.Destinations |> List.contains (Name "rx"))
         |> Seq.exactlyOne
-    let connectedSources = match (connectedToRx machine) with
-                            | Conjunction c -> c.SourcePulses |> Map.keys 
-                            | _ -> failwith "feil"
-    let limitFn name = fun (_, _, pulses) -> pulses |> Seq.exists (fun p -> p.Destination = name && p.Type = Low)
-    let buttonPushesUntilLimit name = start (limitFn name) machine |> snd |> Seq.last
+
+    let connectedSources =
+        match (connectedToRx machine) with
+        | Conjunction c -> c.SourcePulses |> Map.keys
+        | _ -> failwith "feil"
+
+    let limitFn name =
+        fun (_, _, pulses) -> pulses |> Seq.exists (fun p -> p.Destination = name && p.Type = Low)
+
+    let buttonPushesUntilLimit name =
+        start (limitFn name) machine |> snd |> Seq.last
+
     let cycles = connectedSources |> Seq.map (buttonPushesUntilLimit >> bigint)
-    cycles |> Seq.reduce lcm 
+    cycles |> Seq.reduce lcm
 
 printfn $"{totalPt2}"
