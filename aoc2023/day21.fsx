@@ -1,162 +1,87 @@
 open System.IO
+open System.Collections.Generic
 
-type Label = Label of char
 type Coord = { Row: int; Col: int }
-
-type Visiting =
-    | Yes
-    | No
-
-type Start =
-    { Position: Coord
-      Visiting: Visiting }
-
-    member this.Label = Label 'S'
-
-type Plot =
-    { Position: Coord
-      Visiting: Visiting }
-
-    member this.Label = Label '.'
-
-type Rock =
-    { Position: Coord
-      Visiting: Visiting }
-
-    member this.Label = Label '#'
-
-type Tile =
-    | Start of Start
-    | Plot of Plot
-    | Rock of Rock
-    | Nothing
-
-    member this.Label =
-        match this with
-        | Start s -> s.Label
-        | Plot g -> g.Label
-        | Rock r -> r.Label
-        | Nothing -> failwith "feil"
-
-    member this.Position =
-        match this with
-        | Start s -> s.Position
-        | Plot g -> g.Position
-        | Rock r -> r.Position
-        | Nothing -> failwith "feil"
-
-    member this.Visiting =
-        match this with
-        | Start s -> s.Visiting
-        | Plot g -> g.Visiting
-        | Rock r -> r.Visiting
-        | Nothing -> failwith "feil"
-
-    member this.Visit =
-        match this with
-        | Start s ->
-            Start
-                { s with
-                    Visiting =
-                        match this.Visiting with
-                        | Yes -> No
-                        | No -> Yes }
-        | Plot g ->
-            Plot
-                { g with
-                    Visiting =
-                        match this.Visiting with
-                        | Yes -> No
-                        | No -> Yes }
-        | Rock r ->
-            Rock
-                { r with
-                    Visiting =
-                        match this.Visiting with
-                        | Yes -> No
-                        | No -> Yes }
-        | Nothing -> failwith "feil"
-
-type Garden =
-    { Tiles: Tile[,] }
-
-    member this.Print =
-        for r in [ 0 .. Array2D.length1 this.Tiles - 1 ] do
-            for c in [ 0 .. Array2D.length2 this.Tiles - 1 ] do
-                let t = this.Tiles[r, c]
-                let (Label c') = this.Tiles[r, c].Label
-
-                let labelToPrint =
-                    match t.Visiting with
-                    | No -> c'
-                    | Yes -> 'O'
-
-                printf "%c" labelToPrint
-
-            printfn ""
-
-    member this.Neighbors(tile: Tile) =
-        let (row, col) = tile.Position.Row, tile.Position.Col
-
-        let isInBounds pos =
-            pos.Row >= 0
-            && pos.Col >= 0
-            && pos.Row < Array2D.length1 this.Tiles
-            && pos.Col < Array2D.length2 this.Tiles
-
-        let north = { Row = row - 1; Col = col }
-        let south = { Row = row + 1; Col = col }
-        let east = { Row = row; Col = col + 1 }
-        let west = { Row = row; Col = col - 1 }
-        let neighbors = [ north; south; east; west ]
-
-        List.filter isInBounds neighbors
-        |> List.map (fun p -> this.Tiles[p.Row, p.Col])
-        |> List.filter (fun t -> t.Label <> Label '#' && t.Visiting = No)
-
-    member this.Step =
-        let visiting =
-            this.Tiles |> Seq.cast<Tile> |> Seq.filter (fun t -> t.Visiting = Yes)
-
-        let neighbors = Seq.map (fun t -> this.Neighbors t) visiting |> Seq.concat
-
-        let updatedTiles =
-            Array2D.map
-                (fun t ->
-                    if Seq.contains t neighbors then t.Visit
-                    else if Seq.contains t visiting then t.Visit
-                    else t)
-                this.Tiles
-
-        { Tiles = updatedTiles }
-
-    member this.Count =
-        this.Tiles
-        |> Seq.cast<Tile>
-        |> Seq.fold (fun acc t -> if t.Visiting = Yes then acc + 1 else acc) 0
 
 let input = File.ReadAllLines "input.txt" |> array2D
 
-let tiles =
-    let toTile element coord =
-        match element with
-        | 'S' -> Start { Position = coord; Visiting = Yes }
-        | '.' -> Plot { Position = coord; Visiting = No }
-        | '#' -> Rock { Position = coord; Visiting = No }
-        | _ -> failwith "feil"
+let find2D needle (arr: char[,]) =
+    let rec go x y =
+        if y >= arr.GetLength 1 then None
+        elif x >= arr.GetLength 0 then go 0 (y + 1)
+        elif arr[x, y] = needle then Some(x, y)
+        else go (x + 1) y
 
-    Array2D.mapi (fun r c element -> toTile element { Row = r; Col = c }) input
+    go 0 0
 
-let initialGarden = { Tiles = tiles }
+let start' = find2D 'S' input
 
-let rec simulateSteps stepLimit stepNumber (garden: Garden) =
-    printfn $"step # {stepNumber}"
-    let keepWalking = stepNumber < stepLimit
+let start =
+    { Row = (fst start'.Value)
+      Col = (snd start'.Value) }
 
-    match keepWalking with
-    | false -> garden
-    | true -> simulateSteps stepLimit (stepNumber + 1) garden.Step
+let wrapped n =
+    let n' = n % 131
+    if n' >= 0 then n' else 131 + n'
 
-let resultGarden = simulateSteps 64 0 initialGarden
-printfn "%A" resultGarden.Print
-printfn "%d" resultGarden.Count
+let candidates (point: Coord) =
+    let directions = [ (0, -1); (1, 0); (0, 1); (-1, 0) ]
+
+    seq {
+        for d in directions do
+            let newRow' = point.Row + (fst d)
+            let newCol' = point.Col + (snd d)
+            let newPoint = { Row = newRow'; Col = newCol' }
+
+            if input[newPoint.Row |> wrapped, newPoint.Col |> wrapped] <> '#' then // Make sure it wasn't a rock
+                yield newPoint
+    }
+
+let bfs (point: Coord) maxDist =
+    let tiles = new Dictionary<int, int>()
+    let visited = new HashSet<Coord>()
+    let queue = new Queue<Coord * int>()
+    queue.Enqueue((point, 0))
+
+    while queue.Count > 0 do
+        let currPoint, dist = queue.Dequeue()
+
+        if dist = (maxDist + 1) || visited.Contains(currPoint) then
+            ()
+        else
+            if tiles.ContainsKey(dist) then
+                tiles[dist] <- tiles[dist] + 1
+            else
+                tiles.Add(dist, 1)
+
+            visited.Add(currPoint) |> ignore
+
+            for nextPoint in candidates currPoint do
+                queue.Enqueue((nextPoint, dist + 1))
+
+    tiles
+
+let steps (start: Coord) maxSteps =
+    let tiles = bfs start maxSteps
+
+    tiles
+    |> Seq.sumBy (fun kvp -> if kvp.Key % 2 = maxSteps % 2 then kvp.Value else 0)
+
+let result = steps start 64
+printfn $"{result}"
+
+let quad y0 y1 y2 n =
+    let a = (y2 - (2L * y1) + y0) / 2L
+    let b = y1 - y0 - a
+    let c = y0
+    (a * (n * n)) + (b * n) + c
+
+let size = Array2D.length1 input |> int64
+let edge = size / 2L
+let goal = 26501365L
+let target = (goal - edge) / size |> int64
+let y0 = steps start 65
+let y1 = steps start (65 + 131)
+let y2 = steps start (65 + (131 * 2))
+let resultPt2 = quad y0 y1 y2 target
+printfn $"{resultPt2}"
